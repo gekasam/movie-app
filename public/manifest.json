@@ -1,0 +1,6 @@
+{
+  "name": "My Movie App",
+  "short_name": "MovieApp",
+  "description": "An Movie App",
+  "display": "browser"
+}
