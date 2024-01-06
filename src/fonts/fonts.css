@@ -1,0 +1,16 @@
+/* inter-regular - latin */
+@font-face {
+  font-display: swap;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('./inter-v13-latin-regular.woff2') format('woff2');
+}
+/* interUI-regular - latin */
+@font-face {
+  font-family: 'InterUI';
+  font-style: normal;
+  font-weight: 400;
+  src: url('./Inter UI.woff2') format('woff2');
+}
+

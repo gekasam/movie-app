@@ -1,0 +1,41 @@
+.movie {
+  display: flex;
+}
+
+.poster {
+  max-width: 30%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.film-data {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 2%;
+  font-size: 12px;
+  gap: 3%;
+}
+
+.title {
+  font-size: 20px;
+}
+
+.genre-list {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;  
+}
+
+.genre-button {
+  padding: 1%;
+  margin-bottom: 2%;
+  margin-right: 3%;
+}
+
+.release-date {
+  color: #827E7E;
+  padding-bottom: 2%;
+}
+

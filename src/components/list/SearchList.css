@@ -1,0 +1,13 @@
+.search-list {
+  display: grid;
+  justify-content: space-evenly;
+  grid-template-columns: 1fr 1fr;
+  padding: 1%;
+  gap: 3%;
+  list-style: none;
+  overflow: auto;
+}
+
+.movie-card {
+  box-shadow: 3px 3px 13px 0px #0000001f;
+}
