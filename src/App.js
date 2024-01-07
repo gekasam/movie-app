@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Spin, Alert } from 'antd';
+import { Spin, Alert, Pagination } from 'antd';
 
 import Search from './components/search';
 import SearchList from './components/list';
@@ -17,6 +17,9 @@ export default class App extends Component {
       loading: true,
       error: false,
       errorMessage: 'Oops!',
+      totalPages: 0,
+      currentPage: 1,
+      currenSearchInput: '',
     };
 
     this.onError = this.onError.bind(this);
@@ -25,7 +28,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.getMovieList('return');
+    this.getMovieList('return', 1);
     this.getGenres();
   }
 
@@ -37,20 +40,23 @@ export default class App extends Component {
     });
   }
 
-  getMovieList(key) {
+  getMovieList(key, page) {
     this.setState({
       loading: true,
     });
     tmdb
-      .getByKeyword(key)
+      .getByKeyword(key, page)
       .then((result) => {
         if (result.length === 0) {
-          throw new Error('No matches');
+          throw new Error('No matches found');
         }
         this.setState({
-          searchList: result,
+          searchList: result.results,
           loading: false,
           error: false,
+          totalPages: result.total_pages,
+          currenSearchInput: key,
+          currentPage: page,
         });
       })
       .catch((error) => this.onError(error));
@@ -65,11 +71,20 @@ export default class App extends Component {
   }
 
   render() {
-    const { searchList, genreList, loading, error, errorMessage } = this.state;
-
+    const { searchList, genreList, loading, error, errorMessage, totalPages, currentPage, currenSearchInput } =
+      this.state;
     const spinner = loading ? <Spin /> : null;
     const searchContent =
       !loading && !error ? <SearchList searchList={searchList} genreList={genreList} loading={loading} /> : null;
+    const pagination = !error ? (
+      <Pagination
+        className="pagination"
+        current={currentPage}
+        total={totalPages}
+        showSizeChanger={false}
+        onChange={(page) => this.getMovieList(currenSearchInput, page)}
+      />
+    ) : null;
     const errorAlert = error ? <Alert message={errorMessage} /> : null;
 
     return (
@@ -83,6 +98,7 @@ export default class App extends Component {
           {spinner}
           {searchContent}
           {errorAlert}
+          {pagination}
         </main>
       </div>
     );

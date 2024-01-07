@@ -20,7 +20,12 @@
 .main-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 93%;
   width: 80%;
   font-family: 'InterUI';
+}
+
+.pagination {
+  padding-top: 1%;
 }

@@ -7,7 +7,7 @@ export default class Search extends Component {
   constructor({ getMovieList }) {
     super();
     this.state = {
-      searchInput: '',
+      searchInput: 'return',
     };
 
     this.debouncedFunction = debounce(getMovieList, 500);
@@ -20,8 +20,7 @@ export default class Search extends Component {
       },
       () => {
         const { searchInput } = this.state;
-        /* console.log(searchInput); */
-        this.debouncedFunction(searchInput);
+        this.debouncedFunction(searchInput, 1);
       }
     );
   }

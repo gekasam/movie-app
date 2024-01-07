@@ -30,12 +30,12 @@ export default class TheMovieDBService extends Component {
     return response.json();
   }
 
-  async getByKeyword(key) {
+  async getByKeyword(key, page) {
     if (!key || key.match(/#/)) {
       throw new Error('No valid response');
     }
-    const response = await this.getResource(`/search/movie?query=${key}`);
-    return response.results;
+    const response = await this.getResource(`/search/movie?query=${key}&page=${page}`);
+    return response;
   }
 
   async getGenres() {
