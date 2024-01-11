@@ -1,4 +1,4 @@
-.search-list {
+.rated-list {
   display: grid;
   justify-content: space-evenly;
   grid-template-columns: 1fr 1fr;
@@ -10,4 +10,10 @@
 
 .movie-card {
   box-shadow: 3px 3px 13px 0px #0000001f;
+}
+
+@media (max-width: 1185px) {
+  .rated-list {
+    grid-template-columns: 1fr;
+  }
 }

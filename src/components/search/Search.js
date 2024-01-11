@@ -4,10 +4,10 @@ import debounce from 'lodash/debounce';
 import './Search.css';
 
 export default class Search extends Component {
-  constructor({ getMovieList }) {
+  constructor({ getMovieList, currentSearchInput }) {
     super();
     this.state = {
-      searchInput: 'return',
+      searchInput: currentSearchInput,
     };
 
     this.debouncedFunction = debounce(getMovieList, 500);
@@ -20,14 +20,13 @@ export default class Search extends Component {
       },
       () => {
         const { searchInput } = this.state;
-        this.debouncedFunction(searchInput, 1);
+        this.debouncedFunction(searchInput, 1, 'search');
       }
     );
   }
 
   render() {
     const { searchInput } = this.state;
-
     return (
       <div className="search-wrapper">
         <input
