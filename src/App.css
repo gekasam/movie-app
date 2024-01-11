@@ -27,6 +27,9 @@
   background: none;
   position: relative;
   padding-bottom: 10%;
+} 
+.tab-button:hover {
+  background-color: #fffefe;
 }
 
 .tab-button__active {
