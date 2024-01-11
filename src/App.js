@@ -9,7 +9,7 @@ import './App.css';
 import { TMDBProvider } from './components/tmdb-context';
 
 const tmdb = new TheMovieDBService();
-/* TODO: В данный момент рейтинг в сёрч листе после удаления не сбрасывается */
+
 export default class App extends Component {
   constructor(props) {
     super(props);
