@@ -48,7 +48,7 @@ export default class App extends Component {
 
   handlerTabToggle(value) {
     if (value === 'rated') {
-      this.getRatedList(1);
+      this.getRatedList(1, 'rated');
       clearTimeout(this.timer);
       this.setState(
         {
@@ -65,7 +65,7 @@ export default class App extends Component {
       );
     } else {
       const { currentSearchInput: currenSearchInput, currentPageSearch } = this.state;
-      this.getMovieList(currenSearchInput, currentPageSearch);
+      this.getMovieList(currenSearchInput, currentPageSearch, 'search');
       clearTimeout(this.timer);
       this.setState(
         {
@@ -154,6 +154,7 @@ export default class App extends Component {
     if (filmLocation === 'search') {
       this.setState({
         loading: true,
+        currentSearchInput: key,
       });
       tmdb
         .getByKeyword(key, page)
@@ -166,7 +167,6 @@ export default class App extends Component {
             loading: false,
             errorSearch: false,
             totalPagesSearch: result.total_pages,
-            currentSearchInput: key,
             currentPageSearch: page,
           });
         })
