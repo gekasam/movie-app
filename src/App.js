@@ -29,6 +29,7 @@ export default class App extends Component {
       currentSearchInput: 'return',
       guestSessionId: '',
       ratedList: [],
+      ratedFilms: [],
     };
 
     this.onError = this.onError.bind(this);
@@ -114,7 +115,6 @@ export default class App extends Component {
             });
             /* throw new Error('No films rated'); */
           }
-          /* console.log('im here', result.results); */
           this.setState({
             ratedList: result.results,
             loading: false,
@@ -137,6 +137,7 @@ export default class App extends Component {
             });
             throw new Error('No films rated');
           }
+          /* console.log('im in rated getrated valu', result.results); */
           this.setState({
             ratedList: result.results,
             loading: false,
@@ -202,23 +203,43 @@ export default class App extends Component {
   }
 
   postRating(movieId, value, filmLocation) {
-    const { guestSessionId, /* currentSearchInput, currentPageSearch, */ currentPageRated } =
-      this.state;
-    tmdb.postRating(guestSessionId, movieId, value).then(() => {
-      /* if (filmLocation === 'search') {
-        this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
-      } */
+    const { guestSessionId, currentSearchInput, currentPageSearch, currentPageRated } = this.state;
+    tmdb.postRating(guestSessionId, movieId, value).then((/* res */) => {
+      this.setState(({ ratedFilms }) => {
+        const newRatedFilms = [...ratedFilms];
+        const ratedIdx = newRatedFilms.findIndex((object) => object.id === movieId);
+
+        if (ratedIdx >= 0) {
+          newRatedFilms[ratedIdx].value = value;
+          return {
+            ratedFilms: newRatedFilms,
+          };
+        }
+        newRatedFilms.push({ id: movieId, value });
+        return {
+          ratedFilms: newRatedFilms,
+        };
+      });
+
+      this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
+      /* console.log('in App value', value, filmLocation, 'result post', res); */
       this.getRatedList(currentPageRated, filmLocation);
     });
   }
 
   deleteRating(movieId, filmLocation) {
-    const { guestSessionId, /* currentSearchInput, currentPageSearch, */ currentPageRated } =
-      this.state;
+    const { guestSessionId, currentSearchInput, currentPageSearch, currentPageRated } = this.state;
     tmdb.deleteRating(guestSessionId, movieId).then(() => {
-      /* if (filmLocation === 'search') {
-        this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
-      } */
+      this.setState(({ ratedFilms }) => {
+        const newRatedFilms = [...ratedFilms];
+        const ratedIdx = newRatedFilms.findIndex((object) => object.id === movieId);
+
+        newRatedFilms[ratedIdx].value = 0;
+        return {
+          ratedFilms: newRatedFilms,
+        };
+      });
+      this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
       this.getRatedList(currentPageRated, filmLocation);
     });
   }
@@ -248,6 +269,7 @@ export default class App extends Component {
       currentSearchInput,
       guestSessionId,
       ratedList,
+      ratedFilms,
     } = this.state;
 
     const spinner = loading ? <Spin /> : null;
@@ -255,6 +277,7 @@ export default class App extends Component {
       !loading && !errorSearch ? (
         <SearchList
           ratedList={ratedList}
+          ratedFilms={ratedFilms}
           searchList={searchList}
           getMovieList={this.getMovieList}
           currentSearchInput={currentSearchInput}
@@ -265,6 +288,7 @@ export default class App extends Component {
       !loading && !errorRated ? (
         <RatedList
           ratedList={ratedList}
+          ratedFilms={ratedFilms}
           getRatedList={this.getRatedList}
           currentPageRated={currentPageRated}
         />

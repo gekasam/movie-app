@@ -5,13 +5,14 @@ import { TMDBConsumer } from '../tmdb-context';
 export default function SearchList({
   searchList,
   getMovieList,
-  ratedList,
+  /* ratedList, */
+  ratedFilms,
   currentSearchInput,
   currentPageSearch,
 }) {
   function ratingCheck(id) {
-    const ratedFilm = ratedList.find((obj) => obj.id === id);
-    return ratedFilm ? ratedFilm.rating : 0;
+    const ratedFilm = ratedFilms.find((obj) => obj.id === id);
+    return ratedFilm ? ratedFilm.value : 0;
   }
   const films = searchList.map((element) => (
     <li className="movie-card" key={element.id}>

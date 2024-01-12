@@ -11,8 +11,8 @@ export default function Movie({
     overview,
     release_date: releaseDate,
     vote_average: voteAverage,
-    rating = 0,
   },
+  rating,
   genres,
   postRating,
   /* guestSessionId, */
@@ -79,7 +79,6 @@ export default function Movie({
     }
     return '-max';
   }
-
   return (
     <div className="movie">
       <img className="poster" src={getImageAddres()} alt={`Poster to film ${title}`} />
@@ -98,7 +97,7 @@ export default function Movie({
           <p className="movie-description">{textCutter(overview)}</p>
         </div>
         <Rate
-          defaultValue={rating || ratingInSearch}
+          defaultValue={filmLocation === 'search' ? ratingInSearch : rating}
           allowHalf
           count={10}
           onChange={(value) => handlerRate(value)}
