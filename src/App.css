@@ -26,11 +26,11 @@
   border-bottom: 2px solid transparent;
   background: none;
   position: relative;
-  padding: 2%;
+  padding: 2px;
   padding-bottom: 10%;
 } 
 .tab-button:hover {
-  background-color: #fffefe;
+  background-color: #f9f9f9;
 }
 
 .tab-button__active {
@@ -92,6 +92,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
+}
+
+.spinner {
   height: 100%;
 }
 

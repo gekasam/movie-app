@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Spin, Alert, Pagination } from 'antd';
+import classNames from 'classnames';
 
 import Search from './components/search';
 import SearchList from './components/search-list';
@@ -47,40 +48,31 @@ export default class App extends Component {
   }
 
   handlerTabToggle(value) {
-    if (value === 'rated') {
+    const { displayTab, currentSearchInput, currentPageSearch } = this.state;
+    let errorState;
+
+    if (value === 'rated' && displayTab !== 'rated') {
       this.getRatedList(1, 'rated');
-      clearTimeout(this.timer);
-      this.setState(
-        {
-          displayTab: value,
-          errorRated: false,
-        },
-        () => {
-          this.timer = setTimeout(() => {
-            this.setState(({ displayTab }) => ({
-              displayTabView: displayTab,
-            }));
-          }, 200);
-        }
-      );
+      errorState = 'errorRated';
     } else {
-      const { currentSearchInput: currenSearchInput, currentPageSearch } = this.state;
-      this.getMovieList(currenSearchInput, currentPageSearch, 'search');
-      clearTimeout(this.timer);
-      this.setState(
-        {
-          displayTab: value,
-          errorSearch: false,
-        },
-        () => {
-          this.timer = setTimeout(() => {
-            this.setState(({ displayTab }) => ({
-              displayTabView: displayTab,
-            }));
-          }, 200);
-        }
-      );
+      this.getMovieList(currentSearchInput, currentPageSearch, 'search');
+      errorState = 'errorSearch';
     }
+
+    clearTimeout(this.timer);
+    this.setState(
+      {
+        displayTab: value,
+        [errorState]: false,
+      },
+      () => {
+        this.timer = setTimeout(() => {
+          this.setState(({ displayTab: prevDisplayTab }) => ({
+            displayTabView: prevDisplayTab,
+          }));
+        }, 200);
+      }
+    );
   }
 
   onError(error, filmLocation) {
@@ -102,96 +94,51 @@ export default class App extends Component {
   getRatedList(page, filmLocation) {
     const { guestSessionId } = this.state;
 
-    if (filmLocation === 'search') {
-      this.setState({
-        loading: true,
-      });
-      tmdb
-        .getRatedList(guestSessionId, page)
-        .then((result) => {
-          if (result.results.length === 0) {
-            this.setState({
-              ratedList: result.results,
-            });
-            /* throw new Error('No films rated'); */
-          }
+    this.setState({
+      loading: true,
+    });
+    tmdb
+      .getRatedList(guestSessionId, page)
+      .then((result) => {
+        if (result.results.length === 0) {
           this.setState({
             ratedList: result.results,
-            loading: false,
-            errorSearch: false,
-            totalPagesRated: result.total_pages,
-            currentPageRated: page,
           });
-        })
-        .catch((error) => this.onError(error, filmLocation));
-    } else {
-      this.setState({
-        loading: true,
-      });
-      tmdb
-        .getRatedList(guestSessionId, page)
-        .then((result) => {
-          if (result.results.length === 0) {
-            this.setState({
-              ratedList: result.results,
-            });
+          if (filmLocation === 'rated') {
             throw new Error('No films rated');
           }
-          /* console.log('im in rated getrated valu', result.results); */
-          this.setState({
-            ratedList: result.results,
-            loading: false,
-            errorRated: false,
-            totalPagesRated: result.total_pages,
-            currentPageRated: page,
-          });
-        })
-        .catch((error) => this.onError(error, filmLocation));
-    }
+        }
+        this.setState({
+          ratedList: result.results,
+          loading: false,
+          errorSearch: false,
+          totalPagesRated: result.total_pages,
+          currentPageRated: page,
+        });
+      })
+      .catch((error) => this.onError(error, filmLocation));
   }
 
   getMovieList(key, page, filmLocation) {
-    if (filmLocation === 'search') {
-      this.setState({
-        loading: true,
-        currentSearchInput: key,
-      });
-      tmdb
-        .getByKeyword(key, page)
-        .then((result) => {
-          if (result.results.length === 0) {
-            throw new Error('No matches found');
-          }
-          this.setState({
-            searchList: result.results,
-            loading: false,
-            errorSearch: false,
-            totalPagesSearch: result.total_pages,
-            currentPageSearch: page,
-          });
-        })
-        .catch((error) => this.onError(error, filmLocation));
-    } else {
-      this.setState({
-        loading: true,
-      });
-      tmdb
-        .getByKeyword(key, page)
-        .then((result) => {
-          if (result.results.length === 0) {
-            throw new Error('No matches found');
-          }
-          this.setState({
-            searchList: result.results,
-            loading: false,
-            errorRated: false,
-            totalPagesSearch: result.total_pages,
-            currentSearchInput: key,
-            currentPageSearch: page,
-          });
-        })
-        .catch((error) => this.onError(error, filmLocation));
-    }
+    this.setState({
+      loading: true,
+      currentSearchInput: key,
+    });
+    tmdb
+      .getByKeyword(key, page)
+      .then((result) => {
+        if (result.results.length === 0) {
+          throw new Error('No matches found');
+        }
+        this.setState({
+          searchList: result.results,
+          loading: false,
+          errorSearch: false,
+          totalPagesSearch: result.total_pages,
+          currentPageSearch: page,
+        });
+      })
+      .catch((error) => this.onError(error, filmLocation));
   }
 
   getGenres() {
@@ -202,8 +149,9 @@ export default class App extends Component {
     });
   }
 
-  postRating(movieId, value, filmLocation) {
-    const { guestSessionId, currentSearchInput, currentPageSearch, currentPageRated } = this.state;
+  postRating(movieId, value /* filmLocation */) {
+    const { guestSessionId /* currentSearchInput, currentPageSearch, currentPageRated */ } =
+      this.state;
     tmdb.postRating(guestSessionId, movieId, value).then((/* res */) => {
       this.setState(({ ratedFilms }) => {
         const newRatedFilms = [...ratedFilms];
@@ -220,15 +168,14 @@ export default class App extends Component {
           ratedFilms: newRatedFilms,
         };
       });
-
-      this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
-      /* console.log('in App value', value, filmLocation, 'result post', res); */
-      this.getRatedList(currentPageRated, filmLocation);
+      /* this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
+      this.getRatedList(currentPageRated, filmLocation); */
     });
   }
 
-  deleteRating(movieId, filmLocation) {
-    const { guestSessionId, currentSearchInput, currentPageSearch, currentPageRated } = this.state;
+  deleteRating(movieId /* , filmLocation */) {
+    const { guestSessionId /* currentSearchInput, currentPageSearch, currentPageRated  */ } =
+      this.state;
     tmdb.deleteRating(guestSessionId, movieId).then(() => {
       this.setState(({ ratedFilms }) => {
         const newRatedFilms = [...ratedFilms];
@@ -239,8 +186,8 @@ export default class App extends Component {
           ratedFilms: newRatedFilms,
         };
       });
-      this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
-      this.getRatedList(currentPageRated, filmLocation);
+      /* this.getMovieList(currentSearchInput, currentPageSearch, filmLocation);
+      this.getRatedList(currentPageRated, filmLocation); */
     });
   }
 
@@ -272,7 +219,7 @@ export default class App extends Component {
       ratedFilms,
     } = this.state;
 
-    const spinner = loading ? <Spin /> : null;
+    const spinner = loading ? <Spin className="spinner" /> : null;
     const searchContent =
       !loading && !errorSearch ? (
         <SearchList
@@ -313,6 +260,21 @@ export default class App extends Component {
     ) : null;
     const errorAlertSearch = errorSearch ? <Alert message={errorMessage} /> : null;
     const errorAlertRated = errorRated ? <Alert message={errorMessage} /> : null;
+    const tabButtoRightClasses = classNames('tab-button', 'tab-button__right', {
+      'tab-button__right-active': displayTab === 'search',
+      'tab-button__active': displayTab === 'search',
+    });
+    const tabButtonLeftClasses = classNames('tab-button', 'tab-button__left', {
+      'tab-button__left-active': displayTab === 'rated',
+      'tab-button__active': displayTab === 'rated',
+    });
+    const tabSearchClasses = classNames('tab', 'search-tab', {
+      'search-tab__active': displayTab === 'search',
+    });
+    const tabRatedClasses = classNames('tab', 'rated-tab', {
+      'rated-tab__active': displayTab === 'rated',
+    });
+
     return (
       <TMDBProvider
         value={{
@@ -327,18 +289,14 @@ export default class App extends Component {
             <div className="tabs-wrapper">
               <button
                 type="button"
-                className={`tab-button tab-button__right${
-                  displayTab === 'search' ? ' tab-button__right-active tab-button__active' : ''
-                }`}
+                className={tabButtoRightClasses}
                 onClick={() => this.handlerTabToggle('search')}
               >
                 Search
               </button>
               <button
                 type="button"
-                className={`tab-button tab-button__left${
-                  displayTab === 'rated' ? ' tab-button__left-active  tab-button__active' : ''
-                }`}
+                className={tabButtonLeftClasses}
                 onClick={() => this.handlerTabToggle('rated')}
               >
                 Rate
@@ -347,9 +305,7 @@ export default class App extends Component {
           </header>
           <main className="main-container">
             {displayTabView === 'search' ? (
-              <div
-                className={`tab search-tab${displayTab === 'search' ? ' search-tab__active' : ''}`}
-              >
+              <div className={tabSearchClasses}>
                 <Search currentSearchInput={currentSearchInput} getMovieList={this.getMovieList} />
                 {spinner}
                 {searchContent}
@@ -357,7 +313,7 @@ export default class App extends Component {
                 {paginationSearch}
               </div>
             ) : (
-              <div className={`tab rated-tab${displayTab === 'rated' ? ' rated-tab__active' : ''}`}>
+              <div className={tabRatedClasses}>
                 {spinner}
                 {ratedContent}
                 {errorAlertRated}

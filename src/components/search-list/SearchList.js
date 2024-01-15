@@ -2,14 +2,7 @@ import Movie from '../movie';
 import './SearchList.css';
 import { TMDBConsumer } from '../tmdb-context';
 
-export default function SearchList({
-  searchList,
-  getMovieList,
-  /* ratedList, */
-  ratedFilms,
-  currentSearchInput,
-  currentPageSearch,
-}) {
+export default function SearchList({ searchList, ratedFilms }) {
   function ratingCheck(id) {
     const ratedFilm = ratedFilms.find((obj) => obj.id === id);
     return ratedFilm ? ratedFilm.value : 0;
@@ -17,16 +10,12 @@ export default function SearchList({
   const films = searchList.map((element) => (
     <li className="movie-card" key={element.id}>
       <TMDBConsumer>
-        {({ genreList, guestSessionId, postRating, deleteRating }) => (
+        {({ genreList, postRating, deleteRating }) => (
           <Movie
             filmLocation="search"
             ratingInSearch={() => ratingCheck(element.id)}
-            getMovieList={getMovieList}
-            currentSearchInput={currentSearchInput}
-            currentPageSearch={currentPageSearch}
             deleteRating={deleteRating}
             postRating={postRating}
-            guestSessionId={guestSessionId}
             filmData={element}
             genres={element.genre_ids.map((id) => genreList.find((item) => item.id === id).name)}
           />

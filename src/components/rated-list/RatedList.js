@@ -2,7 +2,7 @@ import Movie from '../movie';
 import './RatedList.css';
 import { TMDBConsumer } from '../tmdb-context';
 
-export default function RatedList({ ratedList, ratedFilms, getRatedList, currentPageRated }) {
+export default function RatedList({ ratedList, ratedFilms }) {
   function ratingRewrite(id) {
     const ratedFilm = ratedFilms.find((obj) => obj.id === id);
     return ratedFilm.value;
@@ -10,15 +10,12 @@ export default function RatedList({ ratedList, ratedFilms, getRatedList, current
   const films = ratedList.map((element) => (
     <li className="movie-card" key={element.id}>
       <TMDBConsumer>
-        {({ genreList, guestSessionId, postRating, deleteRating }) => (
+        {({ genreList, postRating, deleteRating }) => (
           <Movie
             filmLocation="rated"
             rating={() => ratingRewrite(element.id)}
-            getRatedList={getRatedList}
-            currentPageRated={currentPageRated}
             deleteRating={deleteRating}
             postRating={postRating}
-            guestSessionId={guestSessionId}
             filmData={element}
             genres={element.genre_ids.map((id) => genreList.find((item) => item.id === id).name)}
           />
