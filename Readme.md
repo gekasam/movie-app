@@ -1,1 +1,1 @@
-https://movie-8auzkoa9m-gekasam.vercel.app/
+https://movie-5tj1jufw3-gekasam.vercel.app/
