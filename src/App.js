@@ -46,12 +46,13 @@ export default class App extends Component {
     this.getGenres();
     this.createGuest();
   }
+  /* TODO: what happ  */
 
   handlerTabToggle(value) {
-    const { displayTab, currentSearchInput, currentPageSearch } = this.state;
+    const { currentSearchInput, currentPageSearch } = this.state;
     let errorState;
 
-    if (value === 'rated' && displayTab !== 'rated') {
+    if (value === 'rated') {
       this.getRatedList(1, 'rated');
       errorState = 'errorRated';
     } else {
@@ -290,14 +291,14 @@ export default class App extends Component {
               <button
                 type="button"
                 className={tabButtoRightClasses}
-                onClick={() => this.handlerTabToggle('search')}
+                onClick={() => displayTab !== 'search' && this.handlerTabToggle('search')}
               >
                 Search
               </button>
               <button
                 type="button"
                 className={tabButtonLeftClasses}
-                onClick={() => this.handlerTabToggle('rated')}
+                onClick={() => displayTab !== 'rated' && this.handlerTabToggle('rated')}
               >
                 Rate
               </button>

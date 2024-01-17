@@ -12,8 +12,7 @@
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:import/recommended",
-    "prettier" /* ,
-    "plugin:prettier/recommended" */
+    "prettier"
   ],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
@@ -30,16 +29,6 @@
   "plugins": ["react", "jsx-a11y", "prettier", "import"],
   "rules": {
     "indent": ["error", 2],
-    /*     "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "trailingComma": "es5",
-        "endOfLine": "crlf",
-        "printWidth": 120,
-        "semi": true
-      }
-    ], */
     "linebreak-style": [0, "windows"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
