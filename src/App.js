@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Spin, Alert, Pagination } from 'antd';
 import classNames from 'classnames';
 
-import Search from './components/search';
-import SearchList from './components/search-list';
-import RatedList from './components/rated-list';
+import Search from './components/Search';
+import SearchList from './components/SearchList';
+import RatedList from './components/RatedList';
 import TheMovieDBService from './services';
 import './App.css';
-import { TMDBProvider } from './components/tmdb-context';
+import { TMDBProvider } from './components/TmdbContext';
 
 const tmdb = new TheMovieDBService();
 
@@ -46,10 +46,10 @@ export default class App extends Component {
     this.getGenres();
     this.createGuest();
   }
-  /* TODO: what happ  */
 
   handlerTabToggle(value) {
     const { currentSearchInput, currentPageSearch } = this.state;
+
     let errorState;
 
     if (value === 'rated') {
@@ -113,7 +113,7 @@ export default class App extends Component {
           ratedList: result.results,
           loading: false,
           errorSearch: false,
-          totalPagesRated: result.total_pages,
+          totalPagesRated: result.total_results,
           currentPageRated: page,
         });
       })
@@ -131,11 +131,12 @@ export default class App extends Component {
         if (result.results.length === 0) {
           throw new Error('No matches found');
         }
+        console.log(result);
         this.setState({
           searchList: result.results,
           loading: false,
           errorSearch: false,
-          totalPagesSearch: result.total_pages,
+          totalPagesSearch: result.total_results,
           currentPageSearch: page,
         });
       })
@@ -245,6 +246,7 @@ export default class App extends Component {
       <Pagination
         className="pagination"
         current={currentPageSearch}
+        pageSize={20}
         total={totalPagesSearch}
         showSizeChanger={false}
         onChange={(page) => this.getMovieList(currentSearchInput, page)}
@@ -254,6 +256,7 @@ export default class App extends Component {
       <Pagination
         className="pagination"
         current={currentPageRated}
+        pageSize={20}
         total={totalPagesRated}
         showSizeChanger={false}
         onChange={(page) => this.getRatedList(page)}

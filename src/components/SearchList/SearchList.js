@@ -1,19 +1,19 @@
-import Movie from '../movie';
-import './RatedList.css';
-import { TMDBConsumer } from '../tmdb-context';
+import Movie from '../Movie';
+import './SearchList.css';
+import { TMDBConsumer } from '../TmdbContext';
 
-export default function RatedList({ ratedList, ratedFilms }) {
-  function ratingRewrite(id) {
+export default function SearchList({ searchList, ratedFilms }) {
+  function ratingCheck(id) {
     const ratedFilm = ratedFilms.find((obj) => obj.id === id);
-    return ratedFilm.value;
+    return ratedFilm ? ratedFilm.value : 0;
   }
-  const films = ratedList.map((element) => (
+  const films = searchList.map((element) => (
     <li className="movie-card" key={element.id}>
       <TMDBConsumer>
         {({ genreList, postRating, deleteRating }) => (
           <Movie
-            filmLocation="rated"
-            rating={() => ratingRewrite(element.id)}
+            filmLocation="search"
+            ratingInSearch={() => ratingCheck(element.id)}
             deleteRating={deleteRating}
             postRating={postRating}
             filmData={element}
@@ -23,5 +23,5 @@ export default function RatedList({ ratedList, ratedFilms }) {
       </TMDBConsumer>
     </li>
   ));
-  return <ul className="rated-list">{films}</ul>;
+  return <ul className="search-list">{films}</ul>;
 }
